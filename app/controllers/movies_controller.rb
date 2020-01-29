@@ -11,9 +11,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    if params[:sort] == 'title'
+      sorted_by = {:title => :asc} # sort the array of titles in ascending order??
+      @title_header = 'hilite'
+    elsif params[:sort] == 'release_date'
+      sorted_by = {:release_date => :asc}
+      @release_date_header = 'hilite'
+    end
+    @movies = Movie.order(sorted_by)
   end
-
+  
   def new
     # default: render 'new' template
   end

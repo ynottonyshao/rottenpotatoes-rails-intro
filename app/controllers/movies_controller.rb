@@ -11,26 +11,26 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @movies = Movie.all
+    @all_ratings = Movie.distinct.pluck(:rating)
+
+    if params[:ratings].nil?
+      @selected_ratings = @all_ratings
+    else
+      @selected_ratings = params[:ratings].keys
+    end
+
     if params[:sort] == 'title'
-      sorted_by = {:title => :asc} # sort the array of titles in ascending order??
+      # sort movies by title
+      sorted_by = {:title => :asc}
       @title_header = 'hilite'
     elsif params[:sort] == 'release_date'
+      # sort movies by release date
       sorted_by = {:release_date => :asc}
       @release_date_header = 'hilite'
     end
-    @all_ratings = Movie.all_ratings
-    @selected_ratings = params[:ratings]
 
-    if @selected_ratings == {}
-      @selected_ratings = Hash(@all_ratings.map{|rating| [rating, rating]})
-    end
-=begin
-    if params[:sort] || params[:rating]
-      redirect_to :sort => params[:sort], :rating => @selected_ratings
-    end
-=end
-
-    @movies = Movie.order(sorted_by)
+    @movies = Movie.order(sorted_by).where(rating: @selected_ratings)
   end
 
   def new

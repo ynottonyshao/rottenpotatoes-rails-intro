@@ -14,23 +14,29 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.distinct.pluck(:rating)
 
-    if params[:ratings].nil?
-      @selected_ratings = @all_ratings
-    else
-      @selected_ratings = params[:ratings].keys
-    end
-
     if params[:sort] == 'title'
       # sort movies by title
-      sorted_by = {:title => :asc}
+      @sort_by = {:title => :asc}
       @title_header = 'hilite'
     elsif params[:sort] == 'release_date'
       # sort movies by release date
-      sorted_by = {:release_date => :asc}
+      @sort_by = {:release_date => :asc}
       @release_date_header = 'hilite'
     end
 
-    @movies = Movie.order(sorted_by).where(rating: @selected_ratings)
+    @selected_ratings = {}
+    if params[:ratings].nil?
+      @selected_ratings = session[:ratings] || @all_ratings
+    else
+      @selected_ratings = params[:ratings].keys
+    end
+    
+    if params[:sort] != session[:sort] || params[:ratings] != session[:ratings]
+      session[:ratings] = @selected_ratings
+      session[:sort] = @sort_by
+    end
+
+    @movies = Movie.order(@sort_by).where(rating: @selected_ratings)
   end
 
   def new

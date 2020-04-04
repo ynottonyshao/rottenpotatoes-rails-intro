@@ -18,9 +18,21 @@ class MoviesController < ApplicationController
       sorted_by = {:release_date => :asc}
       @release_date_header = 'hilite'
     end
+    @all_ratings = Movie.all_ratings
+    @selected_ratings = params[:ratings]
+
+    if @selected_ratings == {}
+      @selected_ratings = Hash(@all_ratings.map{|rating| [rating, rating]})
+    end
+=begin
+    if params[:sort] || params[:rating]
+      redirect_to :sort => params[:sort], :rating => @selected_ratings
+    end
+=end
+
     @movies = Movie.order(sorted_by)
   end
-  
+
   def new
     # default: render 'new' template
   end

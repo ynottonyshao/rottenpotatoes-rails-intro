@@ -18,21 +18,26 @@ class MoviesController < ApplicationController
     # puts("SESSION SORT: ", session[:sort])
     # puts("-----------------------------")
     
-    if params[:sort] == 'title'
+    if params[:sort] == "title"
       # sort movies by title
-      @sort_by = {:title => :asc}
+      @sort_by = params[:sort]
       @title_header = 'hilite'
-    elsif params[:sort] == 'release_date'
+    elsif params[:sort] == "release_date"
       # sort movies by release date
-      @sort_by = {:release_date => :asc}
+      @sort_by = params[:sort]
       @release_date_header = 'hilite'
     else
       @sort_by = session[:sort]
+      if session[:sort] == "title"
+        @title_header = 'hilite'
+      elsif session[:sort] == "release_date"
+        @release_date_header = 'hilite'
+      end
     end
 
     # puts("SORT BY: ", @sort_by)
 
-    @selected_ratings = {}
+    # @selected_ratings = {}
     if params[:ratings].nil?
       @selected_ratings = session[:ratings] || @all_ratings
     else

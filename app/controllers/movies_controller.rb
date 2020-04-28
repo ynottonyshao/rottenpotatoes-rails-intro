@@ -14,6 +14,10 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     @all_ratings = Movie.distinct.pluck(:rating)
 
+    # puts("PARAMS SORT: ", params[:sort])
+    # puts("SESSION SORT: ", session[:sort])
+    # puts("-----------------------------")
+    
     if params[:sort] == 'title'
       # sort movies by title
       @sort_by = {:title => :asc}
@@ -22,7 +26,11 @@ class MoviesController < ApplicationController
       # sort movies by release date
       @sort_by = {:release_date => :asc}
       @release_date_header = 'hilite'
+    else
+      @sort_by = session[:sort]
     end
+
+    # puts("SORT BY: ", @sort_by)
 
     @selected_ratings = {}
     if params[:ratings].nil?
